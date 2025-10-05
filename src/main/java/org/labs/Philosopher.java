@@ -21,10 +21,7 @@ final class Philosopher implements Runnable {
         // начальная порция, если на складе ещё есть еда
         ensureBowlHasPortion();
 
-        while (true) {
-            // проверяем, не закрылся ли ресторан
-            if (table.isFinished()) break;
-
+        while (!table.closed.get() && !Thread.currentThread().isInterrupted()) {
             // программист думает перед следующим приёмом пищи
             sleepRandom(rnd, table.cfg.thinkMin(), table.cfg.thinkMax());
 

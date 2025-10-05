@@ -1,10 +1,11 @@
 package org.labs;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.util.concurrent.locks.*;
+import java.util.Properties;
+import java.util.concurrent.CyclicBarrier;
 
 public class DiningProgrammersSimulation {
     public static SimulationResult runSimulation(Config cfg) throws Exception {
@@ -50,21 +51,35 @@ public class DiningProgrammersSimulation {
         return new SimulationResult(table, cfg);
     }
 
-    private static Config getCfg() {
-        final int N = 7; // number of programmers
-        final int W = 3; // number of waiters
-        final long F = 5000; // total portions in stock
-        final Duration thinkMin = Duration.ofMillis(2); // min thinking time in ms
-        final Duration thinkMax = Duration.ofMillis(8); // max thinking time in ms
-        final Duration eatMin = Duration.ofMillis(2); // min eating time in ms
-        final Duration eatMax = Duration.ofMillis(6); // max eating time in ms
-        final int bitesInBowl = 1; // portions in one bowl
+    private static Config loadConfig() {
+        Properties props = new Properties();
+        try (InputStream in = DiningProgrammersSimulation.class
+                .getClassLoader()
+                .getResourceAsStream("application.properties")) {
+
+            if (in == null) {
+                throw new RuntimeException("Не найден application.properties в classpath");
+            }
+            props.load(in);
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка чтения application.properties", e);
+        }
+
+        int N = Integer.parseInt(props.getProperty("N", "7"));
+        int W = Integer.parseInt(props.getProperty("W", "3"));
+        long F = Long.parseLong(props.getProperty("F", "5000"));
+        int bitesInBowl = Integer.parseInt(props.getProperty("bitesInBowl", "1"));
+
+        Duration thinkMin = Duration.ofMillis(Long.parseLong(props.getProperty("thinkMin", "2")));
+        Duration thinkMax = Duration.ofMillis(Long.parseLong(props.getProperty("thinkMax", "8")));
+        Duration eatMin = Duration.ofMillis(Long.parseLong(props.getProperty("eatMin", "2")));
+        Duration eatMax = Duration.ofMillis(Long.parseLong(props.getProperty("eatMax", "6")));
 
         return new Config(N, W, F, bitesInBowl, thinkMin, thinkMax, eatMin, eatMax);
     }
 
     public static void main(String[] args) throws Exception {
-        Config cfg = getCfg();
+        Config cfg = loadConfig();
         SimulationResult res = runSimulation(cfg);
 
         // печать результатов

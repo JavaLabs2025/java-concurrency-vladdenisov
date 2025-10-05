@@ -1,5 +1,7 @@
 package org.labs;
 
+import static org.labs.Utils.POISON;
+
 // официант: берёт заявки из очереди и доливает суп
 final class Waiter implements Runnable {
     final int id;
@@ -9,16 +11,7 @@ final class Waiter implements Runnable {
 
     @Override public void run() {
         try {
-            while (true) {
-                RefillRequest req = table.refillQueue.take();
-
-                // "ядовитая пилюля" — сигнал на завершение
-                if (req == Utils.POISON) {
-                    req.completed.complete(true);
-                    break;
-                }
-
-                // внутри Waiter.run() вместо текущего CAS-цикла
+            for (RefillRequest req = table.refillQueue.take(); req != POISON; req = table.refillQueue.take()) {
                 int want = table.cfg.bitesInBowl();
                 int got = 0;
 

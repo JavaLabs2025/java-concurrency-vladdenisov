@@ -11,11 +11,9 @@ final class Bowl {
 
     // проблем съесть одну ложку
     boolean takeOne() {
-        while (true) {
-            int cur = remaining.get();
-            if (cur <= 0) return false;
-            if (remaining.compareAndSet(cur, cur - 1)) return true;
-        }
+        int cur = remaining.get();
+        if (cur <= 0) return false;
+        return remaining.compareAndSet(cur, cur - 1);
     }
 
     boolean isEmpty() { return remaining.get() == 0; }
