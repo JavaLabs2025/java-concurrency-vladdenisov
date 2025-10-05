@@ -14,19 +14,19 @@ public class DiningProgrammersSimulation {
         // барьер для одновременного старта философов
         CyclicBarrier startBarrier = new CyclicBarrier(cfg.N());
 
-        // официанты (виртуальные потоки)
+        // официанты
         Thread[] waiters = new Thread[cfg.W()];
         for (int id = 0; id < cfg.W(); id++) {
             waiters[id] = Thread.startVirtualThread(new Waiter(id, table));
         }
 
-        // философы (виртуальные потоки)
-        Thread[] philosophers = new Thread[cfg.N()];
+        // программисты
+        Thread[] programmers = new Thread[cfg.N()];
         for (int i = 0; i < cfg.N(); i++) {
             final int id = i;
-            philosophers[i] = Thread.startVirtualThread(() -> {
+            programmers[i] = Thread.startVirtualThread(() -> {
                 try { startBarrier.await(); } catch (Exception ignored) {}
-                new Philosopher(id, table).run();
+                new Programmer(id, table).run();
             });
         }
 
@@ -45,7 +45,7 @@ public class DiningProgrammersSimulation {
         }
 
         // ждём всех
-        for (Thread t : philosophers) t.join();
+        for (Thread t : programmers) t.join();
         for (Thread w : waiters) w.join();
 
         return new SimulationResult(table, cfg);
@@ -88,10 +88,10 @@ public class DiningProgrammersSimulation {
                 res.totalEaten, res.stockLeft, res.F);
         System.out.println("Per programmer portions:");
         for (int i = 0; i < res.N; i++) {
-            System.out.printf("  #%d: %d%n", i, res.eatenPerPhilosopher[i]);
+            System.out.printf("  #%d: %d%n", i, res.eatenPerProgrammer[i]);
         }
-        long max = Arrays.stream(res.eatenPerPhilosopher).max().orElse(0);
-        long min = Arrays.stream(res.eatenPerPhilosopher).min().orElse(0);
+        long max = Arrays.stream(res.eatenPerProgrammer).max().orElse(0);
+        long min = Arrays.stream(res.eatenPerProgrammer).min().orElse(0);
         double avg = res.N == 0 ? 0 : (double) res.totalEaten / res.N;
         double spreadPercent = avg == 0 ? 0 : (double)(max - min) / avg * 100.0;
         System.out.printf("Min=%d  Max=%d  Avg=%.2f  Spread=%d, SpreadPercent=%.2f%%%n",

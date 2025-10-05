@@ -29,7 +29,7 @@ class SimulationResultTest {
 
         assertTrue(res.closed, "Ресторан должен быть закрыт к окончанию теста");
 
-        assertEquals(N, res.eatenPerPhilosopher.length, "Длина eatenPerPhilosopher должна быть N");
+        assertEquals(N, res.eatenPerProgrammer.length, "Длина eatenPerProgrammer должна быть N");
 
         assertEquals(0, res.pendingRefills, "Не должно остаться активных заявок на доливку");
 
@@ -38,7 +38,7 @@ class SimulationResultTest {
         assertEquals(F - res.stockLeft, res.totalEaten,
                 "Сумма съеденного должна совпадать с списанным со склада");
 
-        long sumByPeople = Arrays.stream(res.eatenPerPhilosopher).sum();
+        long sumByPeople = Arrays.stream(res.eatenPerProgrammer).sum();
         assertEquals(res.totalEaten, sumByPeople, "totalEaten должен равняться сумме по участникам");
     }
 
@@ -50,8 +50,8 @@ class SimulationResultTest {
 
         SimulationResult res = DiningProgrammersSimulation.runSimulation(cfg(N, W, F));
 
-        long max = Arrays.stream(res.eatenPerPhilosopher).max().orElse(0);
-        long min = Arrays.stream(res.eatenPerPhilosopher).min().orElse(0);
+        long max = Arrays.stream(res.eatenPerProgrammer).max().orElse(0);
+        long min = Arrays.stream(res.eatenPerProgrammer).min().orElse(0);
         double avg = res.N == 0 ? 0.0 : (double) res.totalEaten / res.N;
 
         // допускаем умеренный спред

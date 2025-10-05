@@ -4,11 +4,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static org.labs.Utils.sleepRandom;
 
-final class Philosopher implements Runnable {
+final class Programmer implements Runnable {
     final int id;
     final Table table;
 
-    Philosopher(int id, Table t) { this.id = id; this.table = t; }
+    Programmer(int id, Table t) { this.id = id; this.table = t; }
 
     @Override public void run() {
         ThreadLocalRandom rnd = ThreadLocalRandom.current();

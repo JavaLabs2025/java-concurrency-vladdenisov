@@ -26,7 +26,7 @@ final class Waiter implements Runnable {
                 }
 
                 if (got > 0) {
-                    table.bowls[req.philosopherId].fill(got);
+                    table.bowls[req.programmerId].fill(got);
                     req.completed.complete(true);
                     // если налили неполную миску — склад исчерпан, можно пометить закрытие
                     if (got < want) table.closed.set(true);
@@ -35,7 +35,7 @@ final class Waiter implements Runnable {
                     req.completed.complete(false);
                 }
 
-                table.refillRequested[req.philosopherId].set(false);
+                table.refillRequested[req.programmerId].set(false);
                 table.pendingRefills.decrementAndGet();
             }
         } catch (InterruptedException ie) {
